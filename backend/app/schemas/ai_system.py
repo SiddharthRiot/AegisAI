@@ -111,3 +111,19 @@ class QuestionnaireRiskFactor(BaseModel):
     question: str
     article: str
     triggers_level: RiskLevel
+
+class ClassificationHistoryItem(BaseModel):
+    system_id: int
+    system_name: str
+    risk_level: RiskLevel
+    assessed_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class ClassificationHistoryResponse(BaseModel):
+    total: int
+    page: int
+    page_size: int
+    items: List[ClassificationHistoryItem]

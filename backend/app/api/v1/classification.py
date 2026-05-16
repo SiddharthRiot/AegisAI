@@ -12,6 +12,8 @@ from app.schemas.ai_system import (
     RiskClassificationRequest,
     RiskClassificationResponse,
     QuestionnaireRiskFactor,
+    ClassificationHistoryItem,
+    ClassificationHistoryResponse,
 )
 
 router = APIRouter()
@@ -394,15 +396,43 @@ def bulk_classify_systems(
     return BulkClassificationResponse(results=results)
 
     
-@router.get("/risk-factors", response_model=List[QuestionnaireRiskFactor])
-def get_questionnaire_risk_factors(
+@router.get("/history", response_model=ClassificationHistoryResponse)
+def get_classification_history(
+    page: int = 1,
+    page_size: int = 10,
+    db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    """
-    Return the static questionnaire metadata used by the risk classification flow.
+    """Get paginated list of past risk classifications for the authenticated user."""
+    offset = (page - 1) * page_size
 
-    This does not query the database because these factors describe the
-    classification rules themselves, not a user's saved questionnaire answers.
-    Keep this list aligned with RiskClassificationRequest and classify_risk().
-    """
-    return QUESTIONNAIRE_RISK_FACTORS
+    query = (
+        db.query(RiskAssessment)
+        .join(AISystem, RiskAssessment.ai_system_id == AISystem.id)
+        .filter(AISystem.owner_id == current_user.id)
+    )
+
+    total = query.count()
+    assessments = (
+        query.order_by(RiskAssessment.assessed_at.desc())
+        .offset(offset)
+        .limit(page_size)
+        .all()
+    )
+
+    items = [
+        ClassificationHistoryItem(
+            system_id=a.ai_system_id,
+            system_name=a.ai_system.name,
+            risk_level=a.risk_level,
+            assessed_at=a.assessed_at,
+        )
+        for a in assessments
+    ]
+
+    return ClassificationHistoryResponse(
+        total=total,
+        page=page,
+        page_size=page_size,
+        items=items,
+    )
