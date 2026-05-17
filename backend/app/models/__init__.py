@@ -8,3 +8,5 @@ from app.models.compliance_snapshot import ComplianceSnapshot
 from app.models.compliance_requirement import ComplianceRequirement, RequirementStatus
 
 __all__ = ["User", "AISystem", "RiskAssessment", "Document", "RAGFeedback", "GuardScanLog", "ComplianceSnapshot", "ComplianceRequirement", "RequirementStatus"]
+from app.models.webhook import WebhookConfig
+__all__ = ["User", "AISystem", "RiskAssessment", "Document", "RAGFeedback", "AISystemAuditLog", "GuardScanLog", "WebhookConfig"]
