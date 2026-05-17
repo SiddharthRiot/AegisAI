@@ -32,14 +32,13 @@ class AISystem(Base):
     version = Column(String(50))
 
     # Classification
-    use_case = Column(String(255))  # e.g., "CV Screening", "Candidate Ranking"
-    sector = Column(String(255))  # e.g., "HR Tech", "Finance", "Healthcare"
+    use_case = Column(String(255))
+    sector = Column(String(255))
     risk_level = Column(Enum(RiskLevel), nullable=True)
 
     # Compliance tracking
     compliance_status = Column(Enum(ComplianceStatus), default=ComplianceStatus.NOT_STARTED)
-    compliance_score = Column(Float, nullable=True, default=None)  # 0.0–100.0, null until classification runs
-    # Questionnaire responses (JSON)
+    compliance_score = Column(Float, nullable=True, default=None)
     questionnaire_responses = Column(JSON, default=dict)
 
     # Timestamps
@@ -50,6 +49,7 @@ class AISystem(Base):
     owner = relationship("User", back_populates="ai_systems")
     risk_assessments = relationship("RiskAssessment", back_populates="ai_system")
     documents = relationship("Document", back_populates="ai_system")
+    requirements = relationship("ComplianceRequirement", back_populates="ai_system")
 
 
 class RiskAssessment(Base):
@@ -59,15 +59,15 @@ class RiskAssessment(Base):
     ai_system_id = Column(Integer, ForeignKey("ai_systems.id"), nullable=False)
 
     # Assessment details
-    assessment_type = Column(String(100))  # "initial", "periodic", "incident"
+    assessment_type = Column(String(100))
     risk_level = Column(Enum(RiskLevel))
 
     # Findings
-    findings = Column(JSON, default=list)  # List of risk findings
-    recommendations = Column(JSON, default=list)  # List of recommendations
+    findings = Column(JSON, default=list)
+    recommendations = Column(JSON, default=list)
 
     # Scores
-    overall_score = Column(Integer)  # 0-100
+    overall_score = Column(Integer)
     data_governance_score = Column(Integer)
     transparency_score = Column(Integer)
     human_oversight_score = Column(Integer)
