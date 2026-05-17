@@ -50,6 +50,8 @@ class AISystem(Base):
     owner = relationship("User", back_populates="ai_systems")
     risk_assessments = relationship("RiskAssessment", back_populates="ai_system")
     documents = relationship("Document", back_populates="ai_system")
+    compliance_snapshots = relationship("ComplianceSnapshot", back_populates="ai_system")
+    requirements = relationship("ComplianceRequirement", back_populates="ai_system")
 
 
 class RiskAssessment(Base):
