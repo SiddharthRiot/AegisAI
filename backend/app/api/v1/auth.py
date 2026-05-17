@@ -28,8 +28,6 @@ from app.core.security import (
 )
 from app.core.config import settings
 from app.models.user import User
-from app.models.ai_system import AISystem, ComplianceStatus
-from app.models.document import Document
 from app.schemas.user import UserCreate, UserResponse, UserUpdateSchema, Token
 
 
@@ -62,12 +60,14 @@ users_router = APIRouter()
 )
 def register(user_data: UserCreate, db: Session = Depends(get_db)):
     """Register a new user."""
+    # Check if email already exists
     existing_user = db.query(User).filter(User.email == user_data.email).first()
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered"
         )
 
+    # Create new user
     user = User(
         email=user_data.email,
         hashed_password=get_password_hash(user_data.password),
