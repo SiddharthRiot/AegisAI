@@ -61,16 +61,17 @@ export default function RagChat() {
         answer: data.answer,
         sources: data.sources || [],
       })
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as { response?: { status?: number; data?: { detail?: string } }; message?: string }
       // ✅ ERROR HANDLING
-      if (err.response?.status === 503) {
+      if (error.response?.status === 503) {
         setError('Index not ready. Please try again later.')
-      } else if (err.response?.status === 401) {
+      } else if (error.response?.status === 401) {
         setError('Unauthorized. Please login again.')
       } else {
         setError(
-          err?.response?.data?.detail ||
-            err.message ||
+          error?.response?.data?.detail ||
+            error.message ||
             'Unable to generate an answer right now.'
         )
       }
