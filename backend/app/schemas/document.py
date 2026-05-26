@@ -20,6 +20,13 @@ class DocumentUpdateRequest(BaseModel):
     """Request to update document content only."""
     content: str
 
+class DocumentTemplateResponse(BaseModel):
+    """Available document template metadata for generation."""
+
+    type: DocumentType
+    name: str
+    description: str
+
 class DocumentResponse(BaseModel):
     id: int
     title: str
@@ -42,3 +49,16 @@ class DocumentGenerateRequest(BaseModel):
     document_type: DocumentType
     ai_system_id: int
     include_recommendations: bool = True
+
+class PublicDocumentResponse(BaseModel):
+    id: int
+    title: str
+    document_type: DocumentType
+    status: DocumentStatus
+    content: Optional[str]
+    version: str
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
