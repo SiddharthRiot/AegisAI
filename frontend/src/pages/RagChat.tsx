@@ -14,6 +14,20 @@ interface RagAnswer {
   answer_id?: string
 }
 
+interface ApiError {
+  response?: {
+    status?: number
+    data?: {
+      detail?: string
+    }
+  }
+  message?: string
+}
+
+function isApiError(error: unknown): error is ApiError {
+  return typeof error === 'object' && error !== null
+}
+
 function buildAnswerExport(answer: RagAnswer): string {
   return [
     'AI Response',

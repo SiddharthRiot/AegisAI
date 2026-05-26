@@ -58,13 +58,25 @@ export const authApi = {
 // AI Systems API
 export const aiSystemsApi = {
   list: async (params?: {
-  sort_by?: string
-  order?: string
-  skip?: number
-  limit?: number
+    sort_by?: string
+    order?: string
+    page?: number
+    limit?: number
   }) => {
-  const { data } = await api.get('/ai-systems/', { params })
-  return data
+    // Fix for Issue #631: Transform frontend 'page' into the backend-expected 'skip' query offset parameter
+    const limit = params?.limit ?? 10
+    const page = params?.page ?? 1
+    const skip = (page - 1) * limit
+
+    const queryParams = {
+      sort_by: params?.sort_by,
+      order: params?.order,
+      skip: skip,
+      limit: limit,
+    }
+
+    const { data } = await api.get('/ai-systems/', { params: queryParams })
+    return data
   },
   get: async (id: number) => {
     const { data } = await api.get(`/ai-systems/${id}`)
@@ -179,3 +191,4 @@ export const guardApi = {
 }
 
 export default api
+
