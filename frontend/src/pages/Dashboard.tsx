@@ -15,7 +15,9 @@ export default function Dashboard() {
     queryKey: ['ai-systems'],
     queryFn: () => aiSystemsApi.list(),
   })
-  const systems = Array.isArray(systemsData) ? systemsData : (systemsData?.items ?? [])
+  const systems = (
+    Array.isArray(systemsData) ? systemsData : (systemsData?.items ?? [])
+  ) as Array<{ risk_level: string; compliance_status: string }>
 
   const {
     data: documentsData,
@@ -27,7 +29,9 @@ export default function Dashboard() {
     queryKey: ['documents'],
     queryFn: documentsApi.list,
   })
-  const documents = Array.isArray(documentsData) ? documentsData : (documentsData?.items ?? [])
+  const documents = (
+    Array.isArray(documentsData) ? documentsData : (documentsData?.items ?? [])
+  ) as Array<unknown>
   const isLoading = systemsLoading || documentsLoading
   const hasError = systemsError || documentsError
   const errorMessage =
@@ -217,4 +221,3 @@ export default function Dashboard() {
     </div>
   )
 }
-

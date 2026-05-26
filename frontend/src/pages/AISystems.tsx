@@ -51,7 +51,9 @@ export default function AISystems() {
         limit,
       }),
   })
-  const systems = Array.isArray(systemsData) ? systemsData : (systemsData?.items ?? [])
+  const systems = (
+    Array.isArray(systemsData) ? systemsData : (systemsData?.items ?? [])
+  ) as AISystem[]
 
   const createMutation = useMutation({
     mutationFn: aiSystemsApi.create,
