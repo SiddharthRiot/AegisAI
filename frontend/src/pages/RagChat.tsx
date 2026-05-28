@@ -111,26 +111,20 @@ export default function RagChat() {
         answer_id: data.answer_id,
       })
     } catch (err: unknown) {
-      const apiError = isApiError(err)
-        ? err
-        : {}
+      const apiError = isApiError(err) ? err : null
 
-      if (
-        apiError.response?.status === 503
-      ) {
+      if (apiError?.response?.status === 503) {
         setError(
           'Index not ready. Please try again later.'
         )
-      } else if (
-        apiError.response?.status === 401
-      ) {
+      } else if (apiError?.response?.status === 401) {
         setError(
           'Unauthorized. Please login again.'
         )
       } else {
         setError(
-          apiError.response?.data?.detail ||
-            apiError.message ||
+          apiError?.response?.data?.detail ||
+            apiError?.message ||
             'Unable to generate an answer right now.'
         )
       }
